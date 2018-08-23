@@ -44,17 +44,21 @@ router.get('/projects/:id', (req, res) => {
     .catch(err => handle(err, res))
 })
 
-// SHOW
-// GET /projects/5a7db6c74d55bc51bdf39793
-// router.get('/projects/:id', requireToken, (req, res) => {
-//   // req.params.id will be set based on the `:id` in the route
-//   Project.findById(req.params.id)
-//     .then(handle404)
-//     // if `findById` is succesful, respond with 200 and "project" JSON
-//     .then(project => res.status(200).json({ project: project.toObject() }))
-//     // if an error occurs, pass it to the handler
-//     .catch(err => handle(err, res))
-// })
+
+router.get('/projects', requireToken, (req, res) => {
+  // req.params.id will be set based on the `:id` in the route
+  Project.find()
+  .then(projects => {
+    // `examples` will be an array of Mongoose documents
+    // we want to convert each one to a POJO, so we use `.map` to
+    // apply `.toObject` to each one
+    return projects.map(project => project.toObject())
+  })
+  // respond with status 200 and JSON of the projects
+  .then(projects => res.status(200).json({ projects: projects }))
+  // if an error occurs, pass it to the handler
+  .catch(err => handle(err, res))
+})
 
 // CREATE
 // POST /projects
